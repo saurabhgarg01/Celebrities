@@ -8,6 +8,11 @@ import requests, json
 def celebrity(request):
     return render(request, "CelebritiesWebApp/Celebrity.html")
 
+def GetCelebrityId(request):
+    name = request.GET['CelebrityName']
+    CelebrityImageUrl = GetImageUrl(name)
+    return HttpResponse(CelebrityImageUrl)
+
 def GetCelebrityImages(request):
     name = request.GET['CelebrityName']
     print(request)
@@ -21,6 +26,8 @@ def GetImageUrl(celebrityName):
     uriBase = "https://api.cognitive.microsoft.com/bing/v7.0/images/search";
     uriQuery = uriBase + "?q=" + urllib.parse.quote(celebrityName);
     headers = {"Ocp-Apim-Subscription-Key": subscriptionKey}
-    responseJson = json.loads(requests.get(uriQuery, headers = headers).text)
-    return responseJson["value"][0]["contentUrl"]
+    responseJson = json.loads(requests.get(uriQuery, headers = headers).text)    
+    for celebrity in responseJson["value"]:
+        imageUrls.append(celebrity["contentUrl"])
+    return imageUrls
     
